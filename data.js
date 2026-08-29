@@ -5,12 +5,12 @@
 
 // ---- Базові завдання на день (id має бути унікальним) ----
 const DEFAULT_TASKS = [
-  { id: "water", icon: "💧", name: "Випити склянку води", coins: 5 },
-  { id: "meditate", icon: "🧘", name: "Медитація 5 хв", coins: 10 },
-  { id: "work", icon: "💻", name: "Попрацювати над проєктом", coins: 15 },
-  { id: "walk", icon: "🚶", name: "Прогулянка", coins: 10 },
-  { id: "read", icon: "📚", name: "Почитати 10 хв", coins: 5 },
-  { id: "sleep", icon: "😴", name: "Лягти спати вчасно", coins: 10 },
+  { id: "water", icon: "💧", name: "Drink Water", coins:"🍌5" },
+  { id: "meditate", icon: "🧘", name: "Meditate",coins:"🍌10" },
+  { id: "school", icon: "💻", name: "Go to school",coins:"🍌15" },
+  { id: "walk", icon: "🚶", name: "Go for a walk",coins:"🍌10"},
+  { id: "read", icon: "📚", name: "Read a book",coins:"🍌5"},
+  { id: "sleep", icon: "😴", name: "Go to sleep",coins:"🍌10" },
 ];
 
 // ---- Стадії росту пета (за загальною кількістю виконаних завдань за весь час) ----
@@ -25,10 +25,10 @@ const PET_STAGES = [
 
 // ---- Скіни (аксесуари), які можна купити й одягнути на пета ----
 const SHOP_SKINS = [
-  { id: "bow", icon: "🎀", name: "Бантик", price: 30 },
-  { id: "glasses", icon: "🕶️", name: "Окуляри", price: 40 },
-  { id: "hat", icon: "🎩", name: "Циліндр", price: 50 },
-  { id: "crown", icon: "👑", name: "Корона", price: 100 },
+  { id: "bow", icon: "🎀", name: "Bow", price: 30 },
+  { id: "glasses", icon: "🕶️", name: "Glasses", price: 40 },
+  { id: "hat", icon: "🎩", name: "Hat", price: 50 },
+  { id: "crown", icon: "👑", name: "Crown", price: 100 },
 ];
 
 // ---- Фони, які можна купити й обрати для зони пета ----
