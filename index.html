@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="uk">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Perfect Day</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <h1>🌤 Perfect Day</h1>
+
+    <nav id="tabs">
+      <button class="tab-btn active" data-tab="today">Today</button>
+      <button class="tab-btn" data-tab="shop">Shop</button>
+    </nav>
+
+    <main>
+      <!-- ==== ВКЛАДКА "СЬОГОДНІ" ==== -->
+      <section id="tab-today" class="tab active">
+        <div id="pet-area">
+          <div id="coin-counter">🪙 <span id="coin-count">0</span></div>
+          <div id="pet-mood"></div>
+          <div id="pet-display">
+            <span id="pet-emoji"></span>
+            <span id="pet-skin"></span>
+          </div>
+          <div id="pet-name"></div>
+          <div id="pet-progress"></div>
+        </div>
+
+        <h2>Завдання</h2>
+        <div id="task-list"></div>
+
+        <form id="add-task-form">
+          <input
+            type="text"
+            id="new-task-icon"
+            placeholder="🙂"
+            maxlength="2"
+            required
+          />
+          <input
+            type="text"
+            id="new-task-name"
+            placeholder="Name card"
+            required
+          />
+          <input
+            type="number"
+            id="new-task-coins"
+            placeholder="Coins"
+            min="1"
+            value="10"
+            required
+          />
+          <button type="submit">+ Add</button>
+        </form>
+      </section>
+
+      <!-- ==== ВКЛАДКА "МАГАЗИН" ==== -->
+      <section id="tab-shop" class="tab">
+        <h2>Skins</h2>
+        <div id="shop-skins" class="shop-grid"></div>
+
+        <h2>Maps</h2>
+        <div id="shop-backgrounds" class="shop-grid"></div>
+      </section>
+    </main>
+
+    <script src="data.js"></script>
+    <script src="app.js"></script>
+  </body>
+</html>
