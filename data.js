@@ -16,7 +16,7 @@ const DEFAULT_TASKS = [
 // ---- Стадії росту пета (за загальною кількістю виконаних завдань за весь час) ----
 // "min" — мінімум totalCompleted, з якого діє ця стадія (масив має йти за зростанням)
 const PET_STAGES = [
-  { min: 0, emoji: "🥚", name: "Яйце" },
+  { min: 0, emoji: "🥚", name: "Яйце", image: "./monkey.svg" },
   { min: 10, emoji: "🐣", name: "Пташеня" },
   { min: 30, emoji: "🐥", name: "Курча" },
   { min: 60, emoji: "🐤", name: "Молодий птах" },
