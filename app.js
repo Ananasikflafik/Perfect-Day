@@ -117,7 +117,7 @@ function equipBackground(item) {
 // ---- рендер ----
 function renderPet() {
   const stage = petStageFor(state.totalCompleted);
-  document.getElementById("pet-emoji").textContent = stage.emoji;
+  document.getElementById("pet-emoji").innerHTML = `<img src="${stage.image}" alt="pet stage">`;
   document.getElementById("pet-name").textContent = stage.name;
 
   const skin = SHOP_SKINS.find((s) => s.id === state.equippedSkin);
@@ -131,10 +131,10 @@ function renderPet() {
 
   document.getElementById("coin-count").textContent = state.coins;
   document.getElementById("pet-progress").textContent =
-    `Виконано сьогодні: ${doneCount}/${tasks.length} · Всього за весь час: ${state.totalCompleted}`;
+    `Done today: ${doneCount}/${tasks.length} · Total: ${state.totalCompleted}`;
 
   const bg = SHOP_BACKGROUNDS.find((b) => b.id === state.equippedBackground);
-  document.getElementById("pet-area").style.background = bg ? bg.color : "#2e2b3a";
+  document.getElementById("pet-area").style.background =  bg ? `url('${bg.image}') center/cover no-repeat` : "#2e2b3a";
 }
 
 function renderTasks() {
@@ -147,7 +147,7 @@ function renderTasks() {
     row.innerHTML = `
       <span class="icon">${task.icon}</span>
       <span class="name">${task.name}</span>
-      <span class="coins">🪙${task.coins}</span>
+      <span class="coins">🍌${task.coins}</span>
     `;
     row.onclick = () => toggleTask(task);
     list.appendChild(row);
@@ -164,8 +164,8 @@ function renderShopGrid(container, items, owned, equippedId, buyFn, equipFn) {
     card.innerHTML = `
       <div class="icon">${item.icon || "🖼️"}</div>
       <div class="name">${item.name}</div>
-      <div class="price">${item.price === 0 ? "Безкоштовно" : "🪙 " + item.price}</div>
-      <button>${isOwned ? (isEquipped ? "Одягнено" : "Обрати") : "Купити"}</button>
+      <div class="price">${item.price === 0 ? "Free" : "🍌 " + item.price}</div>
+      <button>${isOwned ? (isEquipped ? "Dressed" : "Pick") : "Buy"}</button>
     `;
     const btn = card.querySelector("button");
     if (isEquipped) btn.classList.add("equipped");

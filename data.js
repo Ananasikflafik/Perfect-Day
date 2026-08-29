@@ -16,7 +16,7 @@ const DEFAULT_TASKS = [
 // ---- Стадії росту пета (за загальною кількістю виконаних завдань за весь час) ----
 // "min" — мінімум totalCompleted, з якого діє ця стадія (масив має йти за зростанням)
 const PET_STAGES = [
-  { min: 0, emoji: "🥚", name: "Яйце" },
+  { min: 0, emoji: "🥚", name: "Яйце", image: "./monkey.svg" },
   { min: 10, emoji: "🐣", name: "Пташеня" },
   { min: 30, emoji: "🐥", name: "Курча" },
   { min: 60, emoji: "🐤", name: "Молодий птах" },
@@ -34,7 +34,7 @@ const SHOP_SKINS = [
 // ---- Фони, які можна купити й обрати для зони пета ----
 // "room" вважається базовим і виданий одразу безкоштовно
 const SHOP_BACKGROUNDS = [
-  { id: "room", name: "Кімната", price: 0, color: "#2e2b3a" },
+  { id: "room", name: "Кімната", price: 0, color: "#2e2b3a", image: "./BedroomTest.png" },
   { id: "park", name: "Парк", price: 60, color: "#274d2e" },
   { id: "beach", name: "Пляж", price: 80, color: "#0d5b7a" },
   { id: "space", name: "Космос", price: 120, color: "#191537" },
