@@ -16,7 +16,7 @@ const DEFAULT_TASKS = [
 // ---- Стадії росту пета (за загальною кількістю виконаних завдань за весь час) ----
 // "min" — мінімум totalCompleted, з якого діє ця стадія (масив має йти за зростанням)
 const PET_STAGES = [
-  { min: 0, emoji: "🥚", name: "Яйце", image: "./monkey.svg" },
+  { min: 0, emoji: "🥚", name: "Яйце", image: "./imgs/Monkey/monkey.svg" },
   { min: 10, emoji: "🐣", name: "Пташеня" },
   { min: 30, emoji: "🐥", name: "Курча" },
   { min: 60, emoji: "🐤", name: "Молодий птах" },
@@ -35,8 +35,8 @@ const SHOP_SKINS = [
 // "room" вважається базовим і виданий одразу безкоштовно
 const SHOP_BACKGROUNDS = [
   { id: "bedroom", name: "Bedroom", price: 0, color: "#2e2b3a", image:"./imgs/Rooms/Bedroom test.png"},
-  { id: "washroom", name: "Washroom", price: 0, color: "#274d2e", image:"./imgs/Rooms/Kitchen.svg"},
-  { id: "kitchen", name: "Kitchen", price: 0, color: "#0d5b7a" },
-  { id: "school", name: "School", price: 0, color: "#191537" },
+  { id: "washroom", name: "Washroom", price: 0, color: "#274d2e", image:"./imgs/Rooms/Bathroom.svg"},
+  { id: "kitchen", name: "Kitchen", price: 0, color: "#0d5b7a", image:"./imgs/Rooms/Kitchen.svg" },
+  { id: "school", name: "School", price: 0, color: "#191537", image:"./imgs/Rooms/School.svg" },
   { id: "hackathone", name: "Sunbeam Workplace", price: 200, color: "#191537" },
 ];
