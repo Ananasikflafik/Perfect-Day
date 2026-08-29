@@ -1,0 +1,149 @@
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background: #1b1f2b;
+  font-family: "Segoe UI", sans-serif;
+  color: #f0f0f0;
+  padding-bottom: 40px;
+}
+
+h1 { margin: 16px 0 8px; letter-spacing: 2px; }
+h2 { font-size: 16px; opacity: 0.85; margin: 18px 0 8px; }
+
+/* ---- вкладки ---- */
+#tabs { display: flex; gap: 8px; margin-bottom: 12px; }
+.tab-btn {
+  background: #2a3040;
+  border: none;
+  color: #ccc;
+  padding: 8px 18px;
+  border-radius: 20px;
+  cursor: pointer;
+  font-size: 14px;
+}
+.tab-btn.active { background: #ffca28; color: #1b1f2b; font-weight: bold; }
+
+main { width: 100%; max-width: 420px; padding: 0 16px; }
+.tab { display: none; }
+.tab.active { display: block; }
+
+/* ---- зона пета ---- */
+#pet-area {
+  position: relative;
+  border-radius: 16px;
+  padding: 24px 16px;
+  text-align: center;
+  background: #2e2b3a; /* перезаписується з JS кольором фону */
+  transition: background 0.3s;
+}
+#coin-counter {
+  position: absolute;
+  top: 10px;
+  right: 14px;
+  background: #00000055;
+  padding: 4px 10px;
+  border-radius: 12px;
+  font-size: 14px;
+}
+#pet-mood { font-size: 22px; margin-bottom: 4px; }
+#pet-display {
+  position: relative;
+  font-size: 64px;
+  display: inline-block;
+  animation: bob 2s ease-in-out infinite;
+}
+#pet-skin {
+  position: absolute;
+  top: -14px;
+  right: -10px;
+  font-size: 28px;
+}
+@keyframes bob {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-8px); }
+}
+#pet-name { margin-top: 6px; font-weight: bold; }
+#pet-progress { font-size: 12px; opacity: 0.7; margin-top: 4px; }
+
+/* ---- список завдань ---- */
+#task-list { display: flex; flex-direction: column; gap: 8px; margin-top: 8px; }
+.task-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: #262b3a;
+  padding: 10px 14px;
+  border-radius: 10px;
+  cursor: pointer;
+  user-select: none;
+}
+.task-row.done { background: #1b3a25; opacity: 0.75; }
+.task-row .icon { font-size: 22px; }
+.task-row .name { flex: 1; font-size: 14px; }
+.task-row.done .name { text-decoration: line-through; }
+.task-row .coins { font-size: 13px; opacity: 0.8; }
+
+/* ---- форма додавання ---- */
+#add-task-form {
+  display: flex;
+  gap: 6px;
+  margin-top: 14px;
+}
+#add-task-form input {
+  border: none;
+  border-radius: 8px;
+  padding: 8px;
+  font-size: 14px;
+}
+#new-task-icon { width: 46px; text-align: center; }
+#new-task-name { flex: 1; }
+#new-task-coins { width: 64px; }
+#add-task-form button {
+  background: #4caf50;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: 8px 12px;
+  cursor: pointer;
+}
+
+/* ---- магазин ---- */
+.shop-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+.shop-item {
+  background: #262b3a;
+  border-radius: 10px;
+  padding: 12px;
+  text-align: center;
+}
+.shop-item .icon { font-size: 30px; }
+.shop-item .name { font-size: 13px; margin: 4px 0; }
+.shop-item .price { font-size: 12px; opacity: 0.7; margin-bottom: 6px; }
+.shop-item button {
+  width: 100%;
+  border: none;
+  border-radius: 6px;
+  padding: 6px;
+  font-size: 12px;
+  cursor: pointer;
+  background: #4caf50;
+  color: #fff;
+}
+.shop-item button:disabled {
+  background: #444;
+  color: #888;
+  cursor: not-allowed;
+}
+.shop-item button.equipped {
+  background: #ffca28;
+  color: #1b1f2b;
+  font-weight: bold;
+}
