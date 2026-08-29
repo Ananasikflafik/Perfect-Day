@@ -31,5 +31,5 @@ const MAPS = [
   { id: "bathroom", name: "Bathroom", unlockAt: 30, color: "#274d2e", image:"./imgs/Rooms/Bathroom.svg" },
   { id: "kitchen", name: "Kitchen", unlockAt: 60, color: "#0d5b7a", image:"./imgs/Rooms/Kitchen.svg" },
   { id: "School", name: "School", unlockAt: 100, color: "#191537", image: "./imgs/Rooms/School.svg" },
-  { id: "hackathone", name: "Sunbeam Workplace", price: 200, color: "#191537" }
+  { id: "hackathone", name: "Sunbeam Workplace", unlockAt: 100, color: "#191537", image: "./imgs/Rooms/Sunbeam.png" }
 ];

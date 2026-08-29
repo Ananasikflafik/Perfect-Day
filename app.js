@@ -269,7 +269,7 @@ function renderTasks() {
     toggleBtn.classList.add("hidden");
   }
 
-  document.getElementById("task-count").textContent = `Завдань: ${tasks.length}`;
+  document.getElementById("task-count").textContent = `Tasks: ${tasks.length}`;
 }
 
 function renderShop() {
