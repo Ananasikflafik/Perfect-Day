@@ -1,4 +1,6 @@
-* { box-sizing: border-box; }
+* {
+  box-sizing: border-box;
+}
 
 body {
   margin: 0;
@@ -6,17 +8,56 @@ body {
   display: flex;
   flex-direction: column;
   align-items: center;
-  background: #1b1f2b;
-  font-family: "Segoe UI", sans-serif;
+  background: #171527;
+  font-family: 'Segoe UI', sans-serif;
   color: #f0f0f0;
   padding-bottom: 40px;
 }
 
-h1 { margin: 16px 0 8px; letter-spacing: 2px; }
-h2 { font-size: 16px; opacity: 0.85; margin: 18px 0 8px; }
+h1 {
+  margin: 16px 0 8px;
+  letter-spacing: 2px;
+}
+h2 {
+  font-size: 16px;
+  opacity: 0.85;
+  margin: 18px 0 8px;
+}
+
+.screen {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.screen.hidden {
+  display: none;
+}
+
+.top-bar {
+  width: 100%;
+  max-width: 420px;
+  padding: 0 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.icon-btn {
+  background: #2a3040;
+  border: none;
+  color: #f0f0f0;
+  padding: 8px 14px;
+  border-radius: 20px;
+  cursor: pointer;
+  font-size: 13px;
+}
 
 /* ---- вкладки ---- */
-#tabs { display: flex; gap: 8px; margin-bottom: 12px; }
+#tabs {
+  display: flex;
+  gap: 8px;
+  margin: 12px 0;
+}
 .tab-btn {
   background: #2a3040;
   border: none;
@@ -26,19 +67,31 @@ h2 { font-size: 16px; opacity: 0.85; margin: 18px 0 8px; }
   cursor: pointer;
   font-size: 14px;
 }
-.tab-btn.active { background: #ffca28; color: #1b1f2b; font-weight: bold; }
+.tab-btn.active {
+  background: #ffca28;
+  color: #1b1f2b;
+  font-weight: bold;
+}
 
-main { width: 100%; max-width: 420px; padding: 0 16px; }
-.tab { display: none; }
-.tab.active { display: block; }
+main {
+  width: 100%;
+  max-width: 420px;
+  padding: 0 16px;
+}
+.tab {
+  display: none;
+}
+.tab.active {
+  display: block;
+}
 
 /* ---- зона пета ---- */
 #pet-area {
   position: relative;
   border-radius: 16px;
-  padding: 24px 16px;
+  padding: 32px 16px 20px;
   text-align: center;
-  background: #2e2b3a; /* перезаписується з JS кольором фону */
+  background: #a8a489; /* перезаписується з JS кольором/картинкою мапи */
   transition: background 0.3s;
 }
 #coin-counter {
@@ -50,47 +103,106 @@ main { width: 100%; max-width: 420px; padding: 0 16px; }
   border-radius: 12px;
   font-size: 14px;
 }
-#pet-mood { font-size: 22px; margin-bottom: 4px; }
+#pet-mood {
+  font-size: 22px;
+  margin-bottom: 4px;
+}
+
+/* збільшений пет: контейнер підлаштовується під розмір картинки/емодзі */
 #pet-display {
   position: relative;
-  font-size: 64px;
   display: inline-block;
-  animation: bob 2s ease-in-out infinite;
+  animation: move45 1.6s cubic-bezier(0.4, 0, 0.2, 1) infinite;
 }
+#pet-display img {
+  width: 150px;
+  height: auto;
+  display: block;
+  pointer-events: none;
+}
+.pet-emoji-fallback {
+  display: block;
+  font-size: 180px;
+  line-height: 1;
+}
+
+@keyframes move45 {
+  0% {
+    transform: rotate(-8deg);
+  }
+  50% {
+    transform: rotate(8deg);
+  }
+  100% {
+    transform: rotate(-8deg);
+  }
+}
+
+/* аксесуар позиціонується у % відносно #pet-display (тобто відносно
+   реального розміру картинки пета) — значення top/left задаються
+   в data.js окремо для кожного скіна */
 #pet-skin {
   position: absolute;
-  top: -14px;
-  right: -10px;
-  font-size: 28px;
+  top: 0;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 34px;
+  pointer-events: none;
 }
-@keyframes bob {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-8px); }
+
+#pet-name {
+  margin-top: 10px;
+  font-weight: bold;
+  font-size: 16px;
 }
-#pet-name { margin-top: 6px; font-weight: bold; }
-#pet-progress { font-size: 12px; opacity: 0.7; margin-top: 4px; }
+#pet-name.editable {
+  cursor: pointer;
+}
+.edit-icon {
+  font-size: 13px;
+  opacity: 0.7;
+}
 
 /* ---- список завдань ---- */
-#task-list { display: flex; flex-direction: column; gap: 8px; margin-top: 8px; }
+#task-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 8px;
+}
 .task-row {
   display: flex;
   align-items: center;
   gap: 10px;
-  background: #262b3a;
+  background: #363a26;
   padding: 10px 14px;
   border-radius: 10px;
   cursor: pointer;
   user-select: none;
 }
-.task-row.done { background: #1b3a25; opacity: 0.75; }
-.task-row .icon { font-size: 22px; }
-.task-row .name { flex: 1; font-size: 14px; }
-.task-row.done .name { text-decoration: line-through; }
-.task-row .coins { font-size: 13px; opacity: 0.8; }
+.task-row.done {
+  background: #1b3a25;
+  opacity: 0.75;
+}
+.task-row .icon {
+  font-size: 22px;
+}
+.task-row .name {
+  flex: 1;
+  font-size: 14px;
+}
+.task-row.done .name {
+  text-decoration: line-through;
+}
+.task-row .coins {
+  font-size: 13px;
+  opacity: 0.8;
+}
 
 /* ---- форма додавання ---- */
 #add-task-form {
   display: flex;
+  align-items: center;
   gap: 6px;
   margin-top: 14px;
 }
@@ -100,9 +212,18 @@ main { width: 100%; max-width: 420px; padding: 0 16px; }
   padding: 8px;
   font-size: 14px;
 }
-#new-task-icon { width: 46px; text-align: center; }
-#new-task-name { flex: 1; }
-#new-task-coins { width: 64px; }
+#new-task-icon {
+  width: 46px;
+  text-align: center;
+}
+#new-task-name {
+  flex: 1;
+}
+#custom-task-price {
+  font-size: 13px;
+  opacity: 0.75;
+  white-space: nowrap;
+}
 #add-task-form button {
   background: #4caf50;
   color: #fff;
@@ -124,9 +245,18 @@ main { width: 100%; max-width: 420px; padding: 0 16px; }
   padding: 12px;
   text-align: center;
 }
-.shop-item .icon { font-size: 30px; }
-.shop-item .name { font-size: 13px; margin: 4px 0; }
-.shop-item .price { font-size: 12px; opacity: 0.7; margin-bottom: 6px; }
+.shop-item .icon {
+  font-size: 30px;
+}
+.shop-item .name {
+  font-size: 13px;
+  margin: 4px 0;
+}
+.shop-item .price {
+  font-size: 12px;
+  opacity: 0.7;
+  margin-bottom: 6px;
+}
 .shop-item button {
   width: 100%;
   border: none;
@@ -146,4 +276,65 @@ main { width: 100%; max-width: 420px; padding: 0 16px; }
   background: #ffca28;
   color: #1b1f2b;
   font-weight: bold;
+}
+
+/* ---- екран мап ---- */
+.maps-grid {
+  position: relative;
+  width: 100%;
+  max-width: 420px;
+  padding: 16px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+  margin-top: 8px;
+}
+.map-card {
+  position: relative;
+  min-height: 90px;
+  border-radius: 14px;
+  padding: 16px 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  cursor: pointer;
+  border: 3px solid transparent;
+  background-size: cover;
+  background-position: center;
+}
+.map-card.locked {
+  cursor: not-allowed;
+  filter: grayscale(70%);
+  opacity: 0.55;
+}
+.map-card.current {
+  border-color: #ffca28;
+}
+.map-name {
+  font-weight: bold;
+  font-size: 14px;
+  text-shadow: 0 1px 3px #000000aa;
+}
+.map-lock {
+  font-size: 11px;
+  margin-top: 4px;
+  opacity: 0.9;
+  text-shadow: 0 1px 3px #000000aa;
+}
+
+#map-pet-marker {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 26px;
+  pointer-events: none;
+  z-index: 5;
+  filter: drop-shadow(0 2px 3px #000000aa);
 }

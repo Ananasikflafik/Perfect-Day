@@ -12,14 +12,14 @@ function todayStr() {
 function defaultState() {
   return {
     coins: 0,
-    totalCompleted: 0, // за весь час — впливає на стадію пета
+    totalCompleted: 0, // за весь час — впливає на стадію пета й розблокування мап
     lastActiveDate: todayStr(),
     completedTodayIds: [],
     customTasks: [],
     ownedSkins: [],
     equippedSkin: null,
-    ownedBackgrounds: ["room"],
-    equippedBackground: "room",
+    equippedMap: "room",
+    petName: "",
   };
 }
 
@@ -30,8 +30,13 @@ function loadState() {
   } catch {
     state = defaultState();
   }
+  // м'яка міграція зі старого формату (фони купувались за банани)
+  if (!state.equippedMap) {
+    state.equippedMap = state.equippedBackground || "room";
+  }
+  if (state.petName === undefined) state.petName = "";
   // якщо новий день — скидаємо тільки чекліст на сьогодні,
-  // монети / пет / покупки залишаються назавжди
+  // монети / пет / мапи залишаються назавжди
   if (state.lastActiveDate !== todayStr()) {
     state.completedTodayIds = [];
     state.lastActiveDate = todayStr();
@@ -44,6 +49,7 @@ function saveState() {
 }
 
 let state = loadState();
+let currentMapCardEl = null; // елемент картки поточної мапи на екрані "Maps"
 
 function allTasks() {
   return [...DEFAULT_TASKS, ...state.customTasks];
@@ -55,6 +61,10 @@ function petStageFor(total) {
     if (total >= s.min) stage = s;
   }
   return stage;
+}
+
+function currentMap() {
+  return MAPS.find((m) => m.id === state.equippedMap) || MAPS[0];
 }
 
 // ---- дії користувача ----
@@ -73,12 +83,12 @@ function toggleTask(task) {
   renderAll();
 }
 
-function addCustomTask(icon, name, coins) {
+function addCustomTask(icon, name) {
   state.customTasks.push({
     id: "custom_" + Date.now(),
     icon,
     name,
-    coins,
+    coins: CUSTOM_TASK_COINS, // фіксована ціна, без редагування
   });
   saveState();
   renderAll();
@@ -99,29 +109,23 @@ function equipSkin(item) {
   renderAll();
 }
 
-function buyBackground(item) {
-  if (state.ownedBackgrounds.includes(item.id) || state.coins < item.price) return;
-  state.coins -= item.price;
-  state.ownedBackgrounds.push(item.id);
-  state.equippedBackground = item.id;
-  saveState();
-  renderAll();
-}
-
-function equipBackground(item) {
-  state.equippedBackground = item.id;
-  saveState();
-  renderAll();
-}
-
-// ---- рендер ----
+// ---- рендер: головний екран ----
 function renderPet() {
   const stage = petStageFor(state.totalCompleted);
-  document.getElementById("pet-emoji").innerHTML = `<img src="${stage.image}" alt="pet stage">`;
-  document.getElementById("pet-name").textContent = stage.name;
+  const petEmojiEl = document.getElementById("pet-emoji");
+  petEmojiEl.innerHTML = stage.image
+    ? `<img src="${stage.image}" alt="${stage.name}" title="${stage.name}">`
+    : `<span class="pet-emoji-fallback" title="${stage.name}">${stage.emoji}</span>`;
 
   const skin = SHOP_SKINS.find((s) => s.id === state.equippedSkin);
-  document.getElementById("pet-skin").textContent = skin ? skin.icon : "";
+  const skinEl = document.getElementById("pet-skin");
+  if (skin) {
+    skinEl.textContent = skin.icon;
+    skinEl.style.top = skin.top || "0%";
+    skinEl.style.left = skin.left || "50%";
+  } else {
+    skinEl.textContent = "";
+  }
 
   const tasks = allTasks();
   const doneCount = state.completedTodayIds.length;
@@ -130,11 +134,24 @@ function renderPet() {
   document.getElementById("pet-mood").textContent = mood;
 
   document.getElementById("coin-count").textContent = state.coins;
-  document.getElementById("pet-progress").textContent =
-    `Done today: ${doneCount}/${tasks.length} · Total: ${state.totalCompleted}`;
 
-  const bg = SHOP_BACKGROUNDS.find((b) => b.id === state.equippedBackground);
-  document.getElementById("pet-area").style.background =  bg ? `url('${bg.image}') center/cover no-repeat` : "#2e2b3a";
+  const nameEl = document.getElementById("pet-name");
+  nameEl.innerHTML = state.petName
+    ? `${state.petName} <span class="edit-icon"></span>`
+    : `Name <span class="edit-icon"></span>`;
+  nameEl.onclick = () => {
+    const name = prompt("Як звати улюбленця?", state.petName || "");
+    if (name !== null) {
+      state.petName = name.trim().slice(0, 24);
+      saveState();
+      renderPet();
+    }
+  };
+
+  const map = currentMap();
+  document.getElementById("pet-area").style.background = map.image
+    ? `url('${map.image}') center/cover no-repeat`
+    : map.color;
 }
 
 function renderTasks() {
@@ -154,44 +171,26 @@ function renderTasks() {
   });
 }
 
-function renderShopGrid(container, items, owned, equippedId, buyFn, equipFn) {
+function renderShop() {
+  const container = document.getElementById("shop-skins");
   container.innerHTML = "";
-  items.forEach((item) => {
-    const isOwned = owned.includes(item.id);
-    const isEquipped = equippedId === item.id;
+  SHOP_SKINS.forEach((item) => {
+    const isOwned = state.ownedSkins.includes(item.id);
+    const isEquipped = state.equippedSkin === item.id;
     const card = document.createElement("div");
     card.className = "shop-item";
     card.innerHTML = `
-      <div class="icon">${item.icon || "🖼️"}</div>
+      <div class="icon">${item.icon}</div>
       <div class="name">${item.name}</div>
-      <div class="price">${item.price === 0 ? "Free" : "🍌 " + item.price}</div>
+      <div class="price">🍌 ${item.price}</div>
       <button>${isOwned ? (isEquipped ? "Dressed" : "Pick") : "Buy"}</button>
     `;
     const btn = card.querySelector("button");
     if (isEquipped) btn.classList.add("equipped");
     if (!isOwned && state.coins < item.price) btn.disabled = true;
-    btn.onclick = () => (isOwned ? equipFn(item) : buyFn(item));
+    btn.onclick = () => (isOwned ? equipSkin(item) : buySkin(item));
     container.appendChild(card);
   });
-}
-
-function renderShop() {
-  renderShopGrid(
-    document.getElementById("shop-skins"),
-    SHOP_SKINS,
-    state.ownedSkins,
-    state.equippedSkin,
-    buySkin,
-    equipSkin
-  );
-  renderShopGrid(
-    document.getElementById("shop-backgrounds"),
-    SHOP_BACKGROUNDS,
-    state.ownedBackgrounds,
-    state.equippedBackground,
-    buyBackground,
-    equipBackground
-  );
 }
 
 function renderAll() {
@@ -200,7 +199,72 @@ function renderAll() {
   renderShop();
 }
 
-// ---- вкладки ----
+// ---- рендер: екран мап ----
+function positionMarker(cardEl, animate) {
+  const marker = document.getElementById("map-pet-marker");
+  if (!marker || !cardEl) return;
+  marker.style.transition = animate ? "transform 0.5s ease" : "none";
+  const x = cardEl.offsetLeft + cardEl.offsetWidth / 2 - marker.offsetWidth / 2;
+  const y = cardEl.offsetTop + cardEl.offsetHeight / 2 - marker.offsetHeight / 2;
+  marker.style.transform = `translate(${x}px, ${y}px)`;
+}
+
+function renderMapsScreen() {
+  const grid = document.getElementById("maps-grid");
+ grid.innerHTML = `
+  <div id="map-pet-marker">
+    <img src="./monkey.svg" alt="Pet">
+  </div>
+`;
+  currentMapCardEl = null;
+
+  MAPS.forEach((map) => {
+    const unlocked = state.totalCompleted >= map.unlockAt;
+    const isCurrent = state.equippedMap === map.id;
+
+    const card = document.createElement("div");
+    card.className = "map-card" + (unlocked ? "" : " locked") + (isCurrent ? " current" : "");
+    card.style.background = map.image
+      ? `url('${map.image}') center/cover no-repeat`
+      : map.color;
+    card.innerHTML = unlocked
+      ? `<div class="map-name">${map.name}</div>`
+      : `<div class="map-name">${map.name}</div><div class="map-lock">🔒 ${map.unlockAt} завдань</div>`;
+
+    if (unlocked && !isCurrent) {
+      card.onclick = () => {
+        const prevCardEl = currentMapCardEl;
+        state.equippedMap = map.id;
+        saveState();
+        prevCardEl && prevCardEl.classList.remove("current");
+        card.classList.add("current");
+        currentMapCardEl = card;
+        positionMarker(card, true);
+      };
+    }
+
+    grid.appendChild(card);
+    if (isCurrent) currentMapCardEl = card;
+  });
+
+  // позиціонуємо мітку без анімації одразу після відкриття екрана
+  requestAnimationFrame(() => positionMarker(currentMapCardEl, false));
+}
+
+// ---- перемикання екранів (Main <-> Maps) ----
+document.getElementById("open-maps-btn").addEventListener("click", () => {
+  document.getElementById("screen-main").classList.add("hidden");
+  document.getElementById("screen-maps").classList.remove("hidden");
+  renderMapsScreen();
+});
+
+document.getElementById("home-btn").addEventListener("click", () => {
+  document.getElementById("screen-maps").classList.add("hidden");
+  document.getElementById("screen-main").classList.remove("hidden");
+  renderAll(); // тут "проявляється" нова мапа на головному екрані
+});
+
+// ---- вкладки Today / Shop ----
 document.querySelectorAll(".tab-btn").forEach((btn) => {
   btn.addEventListener("click", () => {
     document.querySelectorAll(".tab-btn").forEach((b) => b.classList.remove("active"));
@@ -210,16 +274,13 @@ document.querySelectorAll(".tab-btn").forEach((btn) => {
   });
 });
 
-// ---- форма додавання завдання ----
+// ---- форма додавання завдання (ціна фіксована, без інпута) ----
 document.getElementById("add-task-form").addEventListener("submit", (e) => {
   e.preventDefault();
-  const icon = document.getElementById("new-task-icon").value.trim() || "🙂";
   const name = document.getElementById("new-task-name").value.trim();
-  const coins = Number(document.getElementById("new-task-coins").value) || 10;
   if (!name) return;
-  addCustomTask(icon, name, coins);
+  addCustomTask(icon, name);
   e.target.reset();
-  document.getElementById("new-task-coins").value = 10;
 });
 
 // ---- старт ----
