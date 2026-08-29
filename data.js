@@ -5,12 +5,12 @@
 
 // ---- Базові завдання на день (id має бути унікальним) ----
 const DEFAULT_TASKS = [
-  { id: "water", icon: "💧", name: "Drink Water", coins:"🍌5" },
-  { id: "meditate", icon: "🧘", name: "Meditate",coins:"🍌10" },
-  { id: "school", icon: "💻", name: "Go to school",coins:"🍌15" },
-  { id: "walk", icon: "🚶", name: "Go for a walk",coins:"🍌10"},
-  { id: "read", icon: "📚", name: "Read a book",coins:"🍌5"},
-  { id: "sleep", icon: "😴", name: "Go to sleep",coins:"🍌10" },
+  { id: "water", icon: "💧", name: "Drink Water", coins:5 },
+  { id: "meditate", icon: "🧘", name: "Meditate",coins:10 },
+  { id: "school", icon: "💻", name: "Go to school",coins:15 },
+  { id: "walk", icon: "🚶", name: "Go for a walk",coins:10},
+  { id: "read", icon: "📚", name: "Read a book",coins:5},
+  { id: "sleep", icon: "😴", name: "Go to sleep",coins:10},
 ];
 
 // ---- Стадії росту пета (за загальною кількістю виконаних завдань за весь час) ----
@@ -34,8 +34,10 @@ const SHOP_SKINS = [
 // ---- Фони, які можна купити й обрати для зони пета ----
 // "room" вважається базовим і виданий одразу безкоштовно
 const SHOP_BACKGROUNDS = [
-  { id: "room", name: "Кімната", price: 0, color: "#2e2b3a" },
-  { id: "park", name: "Парк", price: 60, color: "#274d2e" },
-  { id: "beach", name: "Пляж", price: 80, color: "#0d5b7a" },
-  { id: "space", name: "Космос", price: 120, color: "#191537" },
+  { id: "bedroom", name: "Bedroom", price: 0, color: "#2e2b3a", image:"./imgs/Rooms/Bedroom test.png"},
+  { id: "washroom", name: "Washroom", price: 0, color: "#274d2e", image:"./imgs/Rooms/Kitchen.svg"},
+  { id: "kitchen", name: "Kitchen", price: 0, color: "#0d5b7a" },
+  { id: "school", name: "School", price: 0, color: "#191537" },
+
+  { id: "hackathone", name: "Sunbeam Workplace", price: 200, color: "#191537" },
 ];
