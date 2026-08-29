@@ -38,6 +38,5 @@ const SHOP_BACKGROUNDS = [
   { id: "washroom", name: "Washroom", price: 0, color: "#274d2e", image:"./imgs/Rooms/Kitchen.svg"},
   { id: "kitchen", name: "Kitchen", price: 0, color: "#0d5b7a" },
   { id: "school", name: "School", price: 0, color: "#191537" },
-
   { id: "hackathone", name: "Sunbeam Workplace", price: 200, color: "#191537" },
 ];
