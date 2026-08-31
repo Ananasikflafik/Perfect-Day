@@ -9,8 +9,11 @@
     <!-- ==== ГОЛОВНИЙ ЕКРАН ==== -->
     <div id="screen-main" class="screen">
       <header class="top-bar">
-        <h1>🌤 Monkey Day</h1>
+        <h1>🌤 Perfect Day</h1>
         <button id="open-maps-btn" class="icon-btn">🗺️ Maps</button>
+        <div class="top-bar">
+          <button id="journalBtn" class="icon-btn">📖 Journal</button>
+        </div>
       </header>
 
       <nav id="tabs">
@@ -23,7 +26,6 @@
         <section id="tab-today" class="tab active">
           <div id="pet-area">
             <div id="coin-counter">🍌<span id="coin-count">0</span></div>
-            <div id="pet-mood"></div>
             <div id="pet-display">
               <span id="pet-emoji"></span>
               <span id="pet-skin"></span>
@@ -31,8 +33,13 @@
             <div id="pet-name" class="editable"></div>
           </div>
 
-          <h2>Завдання</h2>
+          <div class="task-list-header">
+            <h2>Tasks</h2>
+            <span id="task-count"></span>
+          </div>
+
           <div id="task-list"></div>
+          <button id="toggle-tasks-btn" class="toggle-btn hidden"></button>
 
           <form id="add-task-form">
             <input
@@ -44,6 +51,7 @@
             <span id="custom-task-price">🍌 +5</span>
             <button type="submit">+ Add</button>
           </form>
+          <div id="task-limit-msg" class="limit-msg hidden"></div>
         </section>
 
         <!-- ==== ВКЛАДКА "МАГАЗИН" ==== -->
@@ -62,8 +70,51 @@
       </header>
       <div id="maps-grid" class="maps-grid"></div>
     </div>
+    <div class="journal" id="journalSection">
+      <h1>🐒 Monkey's Journal</h1>
+
+      <p class="subtitle">swinging through thoughts, one banana at a time 🍌</p>
+
+      <div class="card">
+        <input
+          type="text"
+          id="entryTitle"
+          placeholder="Give today a jungle title... 🌴"
+        />
+
+        <div class="moods" id="moodPicker">
+          <button class="mood" data-mood="🐵">🐵</button>
+
+          <button class="mood" data-mood="😢">😢</button>
+
+          <button class="mood" data-mood="😴">😴</button>
+
+          <button class="mood" data-mood="🥰">🥰</button>
+
+          <button class="mood" data-mood="😤">😤</button>
+
+          <button class="mood" data-mood="🤔">🤔</button>
+
+          <button class="mood" data-mood="🎉">🎉</button>
+        </div>
+
+        <textarea
+          id="entryText"
+          placeholder="Dear jungle diary, today I..."
+        ></textarea>
+
+        <button class="save-btn" id="saveBtn">🍌 Save Entry</button>
+      </div>
+
+      <div class="entries">
+        <h2>🌿 Past Entries</h2>
+
+        <div id="entriesList"></div>
+      </div>
+    </div>
 
     <script src="data.js"></script>
     <script src="app.js"></script>
+    <script scr="script.js"></script>
   </body>
 </html>

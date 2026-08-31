@@ -8,7 +8,7 @@ body {
   display: flex;
   flex-direction: column;
   align-items: center;
-  background: #171527;
+  background: #1b1f2b;
   font-family: 'Segoe UI', sans-serif;
   color: #f0f0f0;
   padding-bottom: 40px;
@@ -21,7 +21,7 @@ h1 {
 h2 {
   font-size: 16px;
   opacity: 0.85;
-  margin: 18px 0 8px;
+  margin: 0;
 }
 
 .screen {
@@ -91,7 +91,7 @@ main {
   border-radius: 16px;
   padding: 32px 16px 20px;
   text-align: center;
-  background: #a8a489; /* перезаписується з JS кольором/картинкою мапи */
+  background: #2e2b3a;
   transition: background 0.3s;
 }
 #coin-counter {
@@ -103,19 +103,16 @@ main {
   border-radius: 12px;
   font-size: 14px;
 }
-#pet-mood {
-  font-size: 22px;
-  margin-bottom: 4px;
-}
 
 /* збільшений пет: контейнер підлаштовується під розмір картинки/емодзі */
 #pet-display {
   position: relative;
   display: inline-block;
+  margin-top: 28px;
   animation: move45 1.6s cubic-bezier(0.4, 0, 0.2, 1) infinite;
 }
 #pet-display img {
-  width: 150px;
+  width: 220px;
   height: auto;
   display: block;
   pointer-events: none;
@@ -139,14 +136,13 @@ main {
 }
 
 /* аксесуар позиціонується у % відносно #pet-display (тобто відносно
-   реального розміру картинки пета) — значення top/left задаються
-   в data.js окремо для кожного скіна */
+   реального розміру картинки пета) — top/left/size задаються в data.js
+   окремо для кожного скіна */
 #pet-skin {
   position: absolute;
   top: 0;
   left: 50%;
   transform: translate(-50%, -50%);
-  font-size: 34px;
   pointer-events: none;
 }
 
@@ -163,18 +159,29 @@ main {
   opacity: 0.7;
 }
 
+/* ---- заголовок списку завдань ---- */
+.task-list-header {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  margin: 18px 0 8px;
+}
+#task-count {
+  font-size: 12px;
+  opacity: 0.6;
+}
+
 /* ---- список завдань ---- */
 #task-list {
   display: flex;
   flex-direction: column;
   gap: 8px;
-  margin-top: 8px;
 }
 .task-row {
   display: flex;
   align-items: center;
   gap: 10px;
-  background: #363a26;
+  background: #262b3a;
   padding: 10px 14px;
   border-radius: 10px;
   cursor: pointer;
@@ -198,6 +205,65 @@ main {
   font-size: 13px;
   opacity: 0.8;
 }
+.task-actions {
+  display: flex;
+  gap: 4px;
+}
+.task-actions button {
+  background: none;
+  border: none;
+  font-size: 15px;
+  cursor: pointer;
+  padding: 2px 4px;
+  opacity: 0.75;
+}
+.task-actions button:hover {
+  opacity: 1;
+}
+
+/* редагування завдання прямо в рядку */
+.task-row.editing {
+  cursor: default;
+  flex-wrap: wrap;
+}
+.task-row.editing input[type='text'] {
+  border: none;
+  border-radius: 6px;
+  padding: 6px;
+  font-size: 14px;
+}
+.task-row.editing .edit-name-input {
+  flex: 1;
+  min-width: 100px;
+}
+.task-row.editing button {
+  background: #4caf50;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  padding: 6px 8px;
+  cursor: pointer;
+  font-size: 13px;
+}
+.task-row.editing .cancel-edit-btn {
+  background: #555;
+}
+
+/* ---- кнопка згорнути/розгорнути ---- */
+.toggle-btn {
+  width: 100%;
+  margin-top: 8px;
+  background: #2a3040;
+  color: #ccc;
+  border: none;
+  border-radius: 8px;
+  padding: 8px;
+  font-size: 13px;
+  cursor: pointer;
+}
+.toggle-btn.hidden {
+  display: none;
+}
 
 /* ---- форма додавання ---- */
 #add-task-form {
@@ -211,10 +277,6 @@ main {
   border-radius: 8px;
   padding: 8px;
   font-size: 14px;
-}
-#new-task-icon {
-  width: 46px;
-  text-align: center;
 }
 #new-task-name {
   flex: 1;
@@ -231,6 +293,18 @@ main {
   border-radius: 8px;
   padding: 8px 12px;
   cursor: pointer;
+}
+
+.limit-msg {
+  margin-top: 8px;
+  background: #5c1f1f;
+  color: #ffcdd2;
+  padding: 8px 12px;
+  border-radius: 8px;
+  font-size: 13px;
+}
+.limit-msg.hidden {
+  display: none;
 }
 
 /* ---- магазин ---- */
@@ -337,4 +411,163 @@ main {
   pointer-events: none;
   z-index: 5;
   filter: drop-shadow(0 2px 3px #000000aa);
+}
+
+/* ---- journal ---- */
+:root {
+  --pink: #c8e6a0;
+  --pink-dark: #f4c542;
+  --lavender: #8bc47e;
+  --cream: #fffaf0;
+  --text: #4a3524;
+  --accent: #d98c2b;
+}
+.journal {
+  width: 100%;
+  max-width: 560px;
+  background: linear-gradient(135deg, #8bc47e 0%, #4f7942 100%);
+  border-radius: 16px;
+  padding: 24px 16px;
+  color: var(--text);
+  font-family: 'Trebuchet MS', 'Segoe UI', sans-serif;
+}
+.journal h1 {
+  text-align: center;
+  font-size: 2rem;
+  margin-bottom: 4px;
+}
+.journal .subtitle {
+  text-align: center;
+  opacity: 0.7;
+  margin-bottom: 24px;
+  font-size: 0.95rem;
+}
+.journal .card {
+  background: var(--cream);
+  border-radius: 24px;
+  padding: 24px;
+  box-shadow: 0 10px 30px rgba(79, 121, 66, 0.45);
+  margin-bottom: 24px;
+  border: 3px dashed #c9a066;
+}
+.journal .moods {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 16px;
+}
+.journal .mood {
+  font-size: 1.6rem;
+  background: none;
+  border: 3px solid transparent;
+  border-radius: 50%;
+  width: 48px;
+  height: 48px;
+  cursor: pointer;
+  transition: 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.journal .mood:hover {
+  transform: scale(1.15);
+}
+.journal .mood.selected {
+  border-color: var(--accent);
+  background: white;
+}
+.journal textarea {
+  width: 100%;
+  min-height: 120px;
+  border: 2px solid var(--pink);
+  border-radius: 16px;
+  padding: 14px;
+  font-size: 1rem;
+  font-family: inherit;
+  resize: vertical;
+  outline: none;
+  background: #fffdf6;
+  color: var(--text);
+}
+.journal textarea:focus {
+  border-color: var(--accent);
+}
+.journal input[type='text'] {
+  width: 100%;
+  border: 2px solid var(--pink);
+  border-radius: 16px;
+  padding: 10px 14px;
+  font-size: 1rem;
+  font-family: inherit;
+  outline: none;
+  margin-bottom: 12px;
+  background: #fffdf6;
+  color: var(--text);
+}
+.journal input[type='text']:focus {
+  border-color: var(--accent);
+}
+.journal button.save-btn {
+  margin-top: 14px;
+  width: 100%;
+  padding: 12px;
+  border: none;
+  border-radius: 16px;
+  background: var(--accent);
+  color: white;
+  font-size: 1.05rem;
+  font-weight: bold;
+  cursor: pointer;
+  transition: 0.2s;
+}
+.journal button.save-btn:hover {
+  background: #b8721f;
+}
+.journal .entries h2 {
+  font-size: 1.2rem;
+  margin-bottom: 12px;
+  padding-left: 4px;
+}
+.journal .entry {
+  background: white;
+  border-radius: 18px;
+  padding: 16px 18px;
+  margin-bottom: 14px;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.06);
+  position: relative;
+}
+.journal .entry-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+.journal .entry-mood {
+  font-size: 1.4rem;
+}
+.journal .entry-date {
+  font-size: 0.8rem;
+  opacity: 0.6;
+}
+.journal .entry-text {
+  white-space: pre-wrap;
+  line-height: 1.5;
+}
+.journal .delete-btn {
+  position: absolute;
+  top: 12px;
+  right: 14px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  opacity: 0.35;
+  font-size: 1rem;
+}
+.journal .delete-btn:hover {
+  opacity: 1;
+}
+.journal .empty {
+  text-align: center;
+  opacity: 0.6;
+  padding: 20px;
+  font-style: italic;
 }

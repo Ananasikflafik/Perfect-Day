@@ -1,7 +1,4 @@
-// ============================================================
-//  ЛОГІКА ЗАСТОСУНКУ
-//  Зазвичай цей файл редагувати не треба — контент у data.js
-// ============================================================
+
 
 const STORAGE_KEY = "perfectDayState";
 
@@ -12,10 +9,10 @@ function todayStr() {
 function defaultState() {
   return {
     coins: 0,
-    totalCompleted: 0, // за весь час — впливає на стадію пета й розблокування мап
+    totalCompleted: 0,
     lastActiveDate: todayStr(),
     completedTodayIds: [],
-    customTasks: [],
+    tasks: DEFAULT_TASKS.map((t) => ({ ...t })), 
     ownedSkins: [],
     equippedSkin: null,
     equippedMap: "room",
@@ -30,13 +27,16 @@ function loadState() {
   } catch {
     state = defaultState();
   }
-  // м'яка міграція зі старого формату (фони купувались за банани)
+  // м'яка міграція зі старих форматів збереження
+  if (!state.tasks) {
+    state.tasks = [...DEFAULT_TASKS.map((t) => ({ ...t })), ...(state.customTasks || [])];
+  }
   if (!state.equippedMap) {
     state.equippedMap = state.equippedBackground || "room";
   }
   if (state.petName === undefined) state.petName = "";
   // якщо новий день — скидаємо тільки чекліст на сьогодні,
-  // монети / пет / мапи залишаються назавжди
+  // монети / пет / мапи / список завдань залишаються назавжди
   if (state.lastActiveDate !== todayStr()) {
     state.completedTodayIds = [];
     state.lastActiveDate = todayStr();
@@ -49,10 +49,12 @@ function saveState() {
 }
 
 let state = loadState();
-let currentMapCardEl = null; // елемент картки поточної мапи на екрані "Maps"
+let currentMapCardEl = null; 
+let editingTaskId = null;
+let tasksExpanded = false; 
 
 function allTasks() {
-  return [...DEFAULT_TASKS, ...state.customTasks];
+  return state.tasks;
 }
 
 function petStageFor(total) {
@@ -67,7 +69,7 @@ function currentMap() {
   return MAPS.find((m) => m.id === state.equippedMap) || MAPS[0];
 }
 
-// ---- дії користувача ----
+// ---- дії користувача: завдання ----
 function toggleTask(task) {
   const idx = state.completedTodayIds.indexOf(task.id);
   if (idx === -1) {
@@ -83,10 +85,24 @@ function toggleTask(task) {
   renderAll();
 }
 
-function addCustomTask(icon, name) {
-  state.customTasks.push({
+function showLimitMessage(text) {
+  const el = document.getElementById("task-limit-msg");
+  el.textContent = text;
+  el.classList.remove("hidden");
+}
+function hideLimitMessage() {
+  document.getElementById("task-limit-msg").classList.add("hidden");
+}
+
+function addCustomTask(name) {
+  if (state.tasks.length >= MAX_TASKS) {
+    showLimitMessage("Too much tasks. You should consider taking a rest.");
+    return;
+  }
+  hideLimitMessage();
+  state.tasks.push({
     id: "custom_" + Date.now(),
-    icon,
+    icon: DEFAULT_TASK_ICON, // іконка фіксована, вибору більше немає
     name,
     coins: CUSTOM_TASK_COINS, // фіксована ціна, без редагування
   });
@@ -94,6 +110,39 @@ function addCustomTask(icon, name) {
   renderAll();
 }
 
+function deleteTask(taskId) {
+  const task = state.tasks.find((t) => t.id === taskId);
+  if (!task) return;
+  if (!confirm(`Delete "${task.name}"?`)) return;
+  state.tasks = state.tasks.filter((t) => t.id !== taskId);
+  state.completedTodayIds = state.completedTodayIds.filter((id) => id !== taskId);
+  if (editingTaskId === taskId) editingTaskId = null;
+  hideLimitMessage();
+  saveState();
+  renderAll();
+}
+
+function startEditTask(taskId) {
+  editingTaskId = taskId;
+  renderTasks();
+}
+function cancelEditTask() {
+  editingTaskId = null;
+  renderTasks();
+}
+function saveEditTask(taskId) {
+  const row = document.querySelector(`.task-row[data-id="${taskId}"]`);
+  if (!row) return;
+  const name = row.querySelector(".edit-name-input").value.trim();
+  if (!name) return;
+  const task = state.tasks.find((t) => t.id === taskId);
+  task.name = name;
+  editingTaskId = null;
+  saveState();
+  renderTasks();
+}
+
+// ---- дії користувача: магазин ----
 function buySkin(item) {
   if (state.ownedSkins.includes(item.id) || state.coins < item.price) return;
   state.coins -= item.price;
@@ -123,24 +172,19 @@ function renderPet() {
     skinEl.textContent = skin.icon;
     skinEl.style.top = skin.top || "0%";
     skinEl.style.left = skin.left || "50%";
+    skinEl.style.fontSize = skin.size || "32px";
   } else {
     skinEl.textContent = "";
   }
-
-  const tasks = allTasks();
-  const doneCount = state.completedTodayIds.length;
-  const ratio = tasks.length ? doneCount / tasks.length : 0;
-  const mood = ratio >= 0.8 ? "😄" : ratio > 0 ? "🙂" : "😴";
-  document.getElementById("pet-mood").textContent = mood;
 
   document.getElementById("coin-count").textContent = state.coins;
 
   const nameEl = document.getElementById("pet-name");
   nameEl.innerHTML = state.petName
-    ? `${state.petName} <span class="edit-icon"></span>`
-    : `Name <span class="edit-icon"></span>`;
+    ? `${state.petName} <span class="edit-icon">✏️</span>`
+    : `Name <span class="edit-icon">✏️</span>`;
   nameEl.onclick = () => {
-    const name = prompt("Як звати улюбленця?", state.petName || "");
+    const name = prompt("Name?", state.petName || "");
     if (name !== null) {
       state.petName = name.trim().slice(0, 24);
       saveState();
@@ -154,21 +198,78 @@ function renderPet() {
     : map.color;
 }
 
+function buildTaskRow(task) {
+  const done = state.completedTodayIds.includes(task.id);
+
+  if (editingTaskId === task.id) {
+    const row = document.createElement("div");
+    row.className = "task-row editing";
+    row.dataset.id = task.id;
+    row.innerHTML = `
+      <span class="icon">${task.icon}</span>
+      <input type="text" class="edit-name-input" value="${task.name.replace(/"/g, "&quot;")}" />
+      <button class="save-edit-btn">✔️</button>
+      <button class="cancel-edit-btn">✖️</button>
+    `;
+    row.querySelector(".save-edit-btn").onclick = (e) => {
+      e.stopPropagation();
+      saveEditTask(task.id);
+    };
+    row.querySelector(".cancel-edit-btn").onclick = (e) => {
+      e.stopPropagation();
+      cancelEditTask();
+    };
+    return row;
+  }
+
+  const row = document.createElement("div");
+  row.className = "task-row" + (done ? " done" : "");
+  row.dataset.id = task.id;
+  row.innerHTML = `
+    <span class="icon">${task.icon}</span>
+    <span class="name">${task.name}</span>
+    <span class="coins">🍌${task.coins}</span>
+    <span class="task-actions">
+      <button class="edit-btn" title="Edit">✏️</button>
+      <button class="delete-btn" title="Delete">🗑️</button>
+    </span>
+  `;
+  row.onclick = () => toggleTask(task);
+  row.querySelector(".edit-btn").onclick = (e) => {
+    e.stopPropagation();
+    startEditTask(task.id);
+  };
+  row.querySelector(".delete-btn").onclick = (e) => {
+    e.stopPropagation();
+    deleteTask(task.id);
+  };
+  return row;
+}
+
 function renderTasks() {
   const list = document.getElementById("task-list");
   list.innerHTML = "";
-  allTasks().forEach((task) => {
-    const done = state.completedTodayIds.includes(task.id);
-    const row = document.createElement("div");
-    row.className = "task-row" + (done ? " done" : "");
-    row.innerHTML = `
-      <span class="icon">${task.icon}</span>
-      <span class="name">${task.name}</span>
-      <span class="coins">🍌${task.coins}</span>
-    `;
-    row.onclick = () => toggleTask(task);
-    list.appendChild(row);
-  });
+  const tasks = allTasks();
+
+  const showCollapsed = tasks.length > 4 && !tasksExpanded;
+  const visibleTasks = showCollapsed ? tasks.slice(0, 4) : tasks;
+  visibleTasks.forEach((task) => list.appendChild(buildTaskRow(task)));
+
+  const toggleBtn = document.getElementById("toggle-tasks-btn");
+  if (tasks.length > 4) {
+    toggleBtn.classList.remove("hidden");
+    toggleBtn.textContent = tasksExpanded
+      ? " ▲"
+      : `More ${tasks.length - 4} ▼`;
+    toggleBtn.onclick = () => {
+      tasksExpanded = !tasksExpanded;
+      renderTasks();
+    };
+  } else {
+    toggleBtn.classList.add("hidden");
+  }
+
+  document.getElementById("task-count").textContent = `Tasks: ${tasks.length}`;
 }
 
 function renderShop() {
@@ -211,11 +312,7 @@ function positionMarker(cardEl, animate) {
 
 function renderMapsScreen() {
   const grid = document.getElementById("maps-grid");
- grid.innerHTML = `
-  <div id="map-pet-marker">
-    <img src="./monkey.svg" alt="Pet">
-  </div>
-`;
+  grid.innerHTML = '<div id="map-pet-marker">🐒</div>';
   currentMapCardEl = null;
 
   MAPS.forEach((map) => {
@@ -247,7 +344,6 @@ function renderMapsScreen() {
     if (isCurrent) currentMapCardEl = card;
   });
 
-  // позиціонуємо мітку без анімації одразу після відкриття екрана
   requestAnimationFrame(() => positionMarker(currentMapCardEl, false));
 }
 
@@ -274,14 +370,22 @@ document.querySelectorAll(".tab-btn").forEach((btn) => {
   });
 });
 
-// ---- форма додавання завдання (ціна фіксована, без інпута) ----
+// ---- форма додавання завдання (ціна й іконка фіксовані, вводиться лише назва) ----
 document.getElementById("add-task-form").addEventListener("submit", (e) => {
   e.preventDefault();
   const name = document.getElementById("new-task-name").value.trim();
   if (!name) return;
-  addCustomTask(icon, name);
-  e.target.reset();
+  addCustomTask(name);
+  document.getElementById("new-task-name").value = "";
 });
 
 // ---- старт ----
 renderAll();
+
+window.debugCompleteTasks = function (n = 10) {
+  state.totalCompleted += n;
+  state.coins += n * 5;
+  saveState();
+  renderAll();
+  console.log(`totalCompleted тепер = ${state.totalCompleted}`);
+};
