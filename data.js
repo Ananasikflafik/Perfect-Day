@@ -27,9 +27,9 @@ const SHOP_SKINS = [
 ];
 
 const MAPS = [
-  { id: "bedroom", name: "Room", unlockAt: 0, color: "#2e2b3a", image: "./imgs/Rooms/Bedroom.png" },
-  { id: "bathroom", name: "Bathroom", unlockAt: 30, color: "#274d2e", image:"./imgs/Rooms/Bathroom.svg" },
-  { id: "kitchen", name: "Kitchen", unlockAt: 60, color: "#0d5b7a", image:"./imgs/Rooms/Kitchen.svg" },
-  { id: "School", name: "School", unlockAt: 100, color: "#191537", image: "./imgs/Rooms/School.svg" },
-  { id: "hackathone", name: "Sunbeam Workplace", unlockAt: 100, color: "#191537", image: "./imgs/Rooms/Sunbeam.png" }
+  { id: "bedroom", name: "Room", unlockAt: 0, color: "#2e2b3a", image: "./imgs/Rooms/BedroomBG.svg" },
+  { id: "bathroom", name: "Bathroom", unlockAt: 30, color: "#274d2e", image:"./imgs/Rooms/BathroomBG.svg" },
+  { id: "kitchen", name: "Kitchen", unlockAt: 60, color: "#0d5b7a", image:"./imgs/Rooms/KitchenBG.svg" },
+  { id: "living room", name: "Living Room", unlockAt: 100, color: "#191537", image: "./imgs/Rooms/LivingroomBG.svg" },
+  { id: "hackathone", name: "Sunbeam Workplace", unlockAt: 100, color: "#191537", image: "./imgs/Rooms/SunbeamBG.svg" }
 ];
